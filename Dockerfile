@@ -16,7 +16,8 @@ RUN apt-get update && apt-get -y install \
 	handbrake-gtk \
 	handbrake-cli \
 	mkvtoolnix-gui \
-	mkvtoolnix
+	mkvtoolnix \
+	gpac
 
 # built-in packages
 RUN apt-get update \
