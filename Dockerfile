@@ -1,10 +1,22 @@
-FROM ubuntu:14.04
-MAINTAINER Doro Wu <fcwu.tw@gmail.com>
+FROM phusion/baseimage:0.9.18
+MAINTAINER stevotdo <slayton1986@gmail.com>
 
 ENV DEBIAN_FRONTEND noninteractive
-ENV HOME /home/ubuntu
+ENV HOME /root
 
 RUN sed -i 's#http://archive.ubuntu.com/#http://tw.archive.ubuntu.com/#' /etc/apt/sources.list
+
+# Fix a Debianism of the nobody's uid being 65534
+RUN usermod -u 99 nobody
+RUN usermod -g 100 nobody
+
+# Installing apps
+RUN add-apt-repository ppa:stebbins/handbrake-releases
+RUN apt-get update && apt-get -y install \
+	handbrake-gtk \
+	handbrake-cli \
+	mkvtoolnix-gui \
+	mkvtoolnix
 
 # built-in packages
 RUN apt-get update \
@@ -39,6 +51,12 @@ RUN chmod +x /bin/tini
 ADD image /
 RUN pip install setuptools wheel && pip install -r /usr/lib/web/requirements.txt
 
-EXPOSE 80
-WORKDIR /root
 ENTRYPOINT ["/startup.sh"]
+
+# Expose Volumes
+VOLUME /In /Out
+
+# Expose Ports
+EXPOSE 80
+
+WORKDIR /root
